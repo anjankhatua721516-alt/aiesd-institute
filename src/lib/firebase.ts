@@ -1,7 +1,10 @@
 import { initializeApp, getApps } from 'firebase/app';
 import {
+  initializeFirestore,
   getFirestore,
   Firestore,
+  persistentLocalCache,
+  persistentMultipleTabManager,
 } from 'firebase/firestore';
 
 const firebaseConfig = {
@@ -17,8 +20,24 @@ const firebaseConfig = {
 // Initialize Firebase app only once (HMR-safe)
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0];
 
-// Firestore instance connected to the project's default database
-const db: Firestore = getFirestore(app);
+// Firestore instance connected to the project's database
+const databaseId = import.meta.env.VITE_FIREBASE_DATABASE_ID || undefined;
+
+let db: Firestore;
+try {
+  db = initializeFirestore(
+    app,
+    {
+      localCache: persistentLocalCache({
+        tabManager: persistentMultipleTabManager(),
+      }),
+      experimentalAutoDetectLongPolling: true,
+    },
+    databaseId
+  );
+} catch {
+  db = databaseId ? getFirestore(app, databaseId) : getFirestore(app);
+}
 
 export { db };
 export default app;
