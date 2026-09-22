@@ -1,0 +1,6 @@
+{
+  "name": "AIESD - Spoken English & Skill Development",
+  "description": "Official portal of AIESD (An Institute of Education & Skill Development) featuring Spoken English, Computer Basics, Interview Training, Batches, Free Grammar Test, and full Admin CMS.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

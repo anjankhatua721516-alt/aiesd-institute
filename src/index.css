@@ -1,0 +1,359 @@
+@import "tailwindcss";
+
+@theme {
+  /* Shadcn / Standard UI color mappings */
+  --color-border: #e4e4e7;
+  --color-input: #e4e4e7;
+  --color-ring: #18181b;
+  --color-background: #ffffff;
+  --color-foreground: #18181b;
+  --color-muted: #f4f4f5;
+  --color-muted-foreground: #71717a;
+  --color-card: #ffffff;
+  --color-card-foreground: #18181b;
+  --color-primary: #18181b;
+  --color-primary-foreground: #ffffff;
+  --color-secondary: #f4f4f5;
+  --color-secondary-foreground: #18181b;
+  --color-destructive: #e11d48;
+  --color-destructive-foreground: #ffffff;
+
+  /* Awesomic Design System - Colors */
+  --color-text-primary: #3f3f46;
+  --color-text-secondary: #18181b;
+  --color-text-inverse: #09090b;
+  --color-surface-base: #ffffff;
+  --color-surface-muted: #000000;
+  --color-surface-raised: #f4f4f5;
+  --color-surface-strong: #fafafa;
+
+  /* Accent & Utility */
+  --color-awesomic-black: #09090b;
+  --color-awesomic-border: #e4e4e7;
+  --color-awesomic-subtle: #71717a;
+
+  /* Typography */
+  --font-family-primary: 'Cosmica', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  --font-family-stack: 'Cosmica', Arial, sans-serif;
+
+  /* Radius */
+  --radius-xs: 14px;
+  --radius-sm: 16px;
+  --radius-md: 28px;
+  --radius-lg: 36px;
+  --radius-xl: 48px;
+  --radius-2xl: 50px;
+}
+
+:root {
+  /* Colors */
+  --color-text-primary: #3f3f46;
+  --color-text-secondary: #18181b;
+  --color-surface-base: #ffffff;
+  --color-text-inverse: #09090b;
+  --color-surface-muted: #000000;
+  --color-surface-raised: #f4f4f5;
+  --color-surface-strong: #fafafa;
+
+  /* Awesomic Shadows */
+  --shadow-1: rgba(255, 255, 255, 0.5) 0px 0.5px 0px 0px inset, rgba(117, 123, 133, 0.4) 0px 9px 14px -5px inset, rgb(44, 46, 52) 0px 0px 0px 1.5px, rgba(0, 0, 0, 0.14) 0px 4px 6px 0px;
+  --shadow-2: rgb(228, 228, 231) 0px 1px 0px 0px inset;
+  --shadow-3: rgb(255, 255, 255) 0px 0.5px 0px 0px inset;
+  --shadow-4: rgba(0, 0, 0, 0.06) 0px 1px 6px 0px, rgba(0, 0, 0, 0.16) 0px 2px 32px 0px;
+
+  /* Spacing Scale */
+  --space-1: 8px;
+  --space-2: 12px;
+  --space-3: 14px;
+  --space-4: 16px;
+  --space-5: 18px;
+  --space-6: 20px;
+  --space-7: 24px;
+  --space-8: 28px;
+
+  /* Typography Scale */
+  --font-size-xs: 13px;
+  --font-size-sm: 14px;
+  --font-size-md: 15px;
+  --font-size-lg: 40px;
+  --font-size-xl: 56px;
+  --font-size-2xl: 64px;
+
+  /* Radius Scale */
+  --radius-xs: 14px;
+  --radius-sm: 16px;
+  --radius-md: 28px;
+  --radius-lg: 36px;
+  --radius-xl: 48px;
+  --radius-2xl: 50px;
+
+  /* Motion */
+  --motion-instant: 167ms;
+  --motion-fast: 200ms;
+  --motion-normal: 250ms;
+  --motion-slow: 1000ms;
+}
+
+body {
+  background-color: #ffffff;
+  color: #3f3f46;
+  font-family: 'Cosmica', Arial, sans-serif;
+  font-size: 14px;
+  line-height: 21px;
+  font-weight: 400;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Awesomic Pill Cards (Large outer curved borders, inner border, smooth shadows) */
+.awesomic-card {
+  background-color: #ffffff;
+  border-radius: 28px;
+  border: 1px solid #e4e4e7;
+  transition: all 200ms ease;
+}
+
+.awesomic-card-dark {
+  background-color: #09090b !important;
+  color: #ffffff !important;
+  border-radius: 28px;
+  border: 1px solid #18181b;
+  transition: all 200ms ease;
+}
+
+.awesomic-card-raised {
+  background-color: #f4f4f5;
+  border-radius: 28px;
+  border: 1px solid #e4e4e7;
+  transition: all 200ms ease;
+}
+
+.awesomic-card-strong {
+  background-color: #fafafa;
+  border-radius: 28px;
+  border: 1px solid #e4e4e7;
+}
+
+/* Awesomic Capsule / Pill Button (Call me now / Book demo button from image reference) */
+.awesomic-btn-dark {
+  background-color: #09090b;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50px;
+  padding: 10px 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: rgba(255, 255, 255, 0.5) 0px 0.5px 0px 0px inset, rgba(117, 123, 133, 0.4) 0px 9px 14px -5px inset, rgb(44, 46, 52) 0px 0px 0px 1.5px, rgba(0, 0, 0, 0.14) 0px 4px 6px 0px;
+  transition: all 200ms ease;
+}
+
+.awesomic-btn-dark:hover {
+  background-color: #18181b;
+  transform: translateY(-1px);
+}
+
+.awesomic-btn-dark:active {
+  transform: translateY(0);
+}
+
+.awesomic-btn-dark:focus-visible {
+  outline: 2px solid #18181b;
+  outline-offset: 2px;
+}
+
+/* Awesomic Light Capsule Button */
+.awesomic-btn-light {
+  background-color: #f4f4f5;
+  color: #18181b;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50px;
+  padding: 8px 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border: 1px solid #e4e4e7;
+  transition: all 200ms ease;
+}
+
+.awesomic-btn-light:hover {
+  background-color: #e4e4e7;
+  color: #09090b;
+}
+
+.awesomic-btn-light:focus-visible {
+  outline: 2px solid #18181b;
+  outline-offset: 2px;
+}
+
+/* Awesomic Ghost / Link Button */
+.awesomic-btn-ghost {
+  background-color: transparent;
+  color: #3f3f46;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 50px;
+  padding: 8px 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 200ms ease;
+}
+
+.awesomic-btn-ghost:hover {
+  background-color: #f4f4f5;
+  color: #18181b;
+}
+
+.awesomic-btn-ghost:focus-visible {
+  outline: 2px solid #18181b;
+  outline-offset: 2px;
+}
+
+/* Awesomic Selector Pill (Like in the screenshot "Launching / Scaling", "Get an expert talent / Create with AI") */
+.awesomic-pill-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 50px;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 167ms ease;
+  border: 1px solid #e4e4e7;
+  background-color: #ffffff;
+  color: #3f3f46;
+  cursor: pointer;
+}
+
+.awesomic-pill-toggle.active {
+  background-color: #09090b;
+  color: #ffffff;
+  border-color: #09090b;
+}
+
+.awesomic-pill-toggle:focus-visible {
+  outline: 2px solid #18181b;
+  outline-offset: 2px;
+}
+
+/* Awesomic Badge / Mini Pill */
+.awesomic-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 12px;
+  border-radius: 50px;
+  font-size: 12px;
+  font-weight: 500;
+  background-color: #f4f4f5;
+  color: #18181b;
+  border: 1px solid #e4e4e7;
+}
+
+/* Standard Awesomic Inputs */
+.awesomic-input {
+  width: 100%;
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid #e4e4e7;
+  background-color: #ffffff;
+  color: #18181b;
+  font-size: 15px;
+  transition: all 167ms ease;
+  touch-action: manipulation;
+}
+
+@media (max-width: 640px) {
+  .awesomic-input {
+    font-size: 16px; /* Prevents unwanted auto-zoom on iOS Safari */
+    padding: 11px 14px;
+  }
+}
+
+.awesomic-input:focus {
+  outline: none;
+  border-color: #18181b;
+  box-shadow: 0 0 0 1px #18181b;
+}
+
+.awesomic-input::placeholder {
+  color: #a1a1aa;
+}
+
+/* Mobile Utilities & Optimizations */
+html, body {
+  overflow-x: hidden;
+  max-width: 100vw;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Mobile Touch Target standard */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* Safe area bottom padding for notch phones */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 16px);
+}
+
+/* Smooth horizontal snap scrolling for mobile pill bars */
+.snap-x-mandatory {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.snap-start-child > * {
+  scroll-snap-align: start;
+}
+
+/* Mobile Table Horizontal Scroll Container */
+.table-responsive-container {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 20px;
+}
+
+@media (max-width: 640px) {
+  .awesomic-card {
+    border-radius: 22px;
+  }
+  .awesomic-card-dark {
+    border-radius: 22px;
+  }
+}
+
+/* ── Scrolling Ticker / Marquee ── */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
