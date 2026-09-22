@@ -39,6 +39,7 @@ import {
   DEFAULT_NAV_ITEMS,
   DEFAULT_SEO
 } from '../data/seedData';
+import { firestoreService } from './firestoreService';
 
 export interface MediaItem {
   id: string;
@@ -163,113 +164,141 @@ export const dbService = {
   // Site Settings
   getSettings: (): SiteSettings => getItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS),
   getSiteSettings: (): SiteSettings => getItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS),
-  saveSettings: (settings: SiteSettings) => setItem(STORAGE_KEYS.SETTINGS, settings),
-  saveSiteSettings: (settings: SiteSettings) => setItem(STORAGE_KEYS.SETTINGS, settings),
+  saveSettings: (settings: SiteSettings, syncCloud = true) => {
+    setItem(STORAGE_KEYS.SETTINGS, settings);
+    if (syncCloud) firestoreService.saveSettings(settings).catch(() => {});
+  },
+  saveSiteSettings: (settings: SiteSettings, syncCloud = true) => {
+    setItem(STORAGE_KEYS.SETTINGS, settings);
+    if (syncCloud) firestoreService.saveSettings(settings).catch(() => {});
+  },
   resetSettings: () => setItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS),
   resetToDefault: () => {
     setItem(STORAGE_KEYS.SETTINGS, DEFAULT_SITE_SETTINGS);
+    firestoreService.saveSettings(DEFAULT_SITE_SETTINGS).catch(() => {});
     return DEFAULT_SITE_SETTINGS;
   },
 
   // Centers
   getCenters: (): Center[] => getItem(STORAGE_KEYS.CENTERS, DEFAULT_CENTERS),
-  saveCenters: (centers: Center[]) => setItem(STORAGE_KEYS.CENTERS, centers),
-  saveCenter: (center: Center) => {
+  saveCenters: (centers: Center[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.CENTERS, centers);
+    if (syncCloud) firestoreService.saveCenters(centers).catch(() => {});
+  },
+  saveCenter: (center: Center, syncCloud = true) => {
     const list = getItem<Center[]>(STORAGE_KEYS.CENTERS, DEFAULT_CENTERS);
     const existingIndex = list.findIndex((c) => c.id === center.id);
-    if (existingIndex >= 0) {
-      list[existingIndex] = center;
-      setItem(STORAGE_KEYS.CENTERS, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.CENTERS, [...list, center]);
-    }
+    const updated = existingIndex >= 0
+      ? list.map((c, i) => (i === existingIndex ? center : c))
+      : [...list, center];
+    setItem(STORAGE_KEYS.CENTERS, updated);
+    if (syncCloud) firestoreService.saveCenter(center).catch(() => {});
   },
-  deleteCenter: (id: string) => {
+  deleteCenter: (id: string, syncCloud = true) => {
     const list = getItem<Center[]>(STORAGE_KEYS.CENTERS, DEFAULT_CENTERS);
     setItem(STORAGE_KEYS.CENTERS, list.filter((c) => c.id !== id));
+    if (syncCloud) firestoreService.deleteCenter(id).catch(() => {});
   },
   resetCenters: () => setItem(STORAGE_KEYS.CENTERS, DEFAULT_CENTERS),
 
   // Hero & Home Sections
   getHeroData: (): HomeHeroData => getItem(STORAGE_KEYS.HERO, DEFAULT_HERO_DATA),
-  saveHeroData: (hero: HomeHeroData) => setItem(STORAGE_KEYS.HERO, hero),
+  saveHeroData: (hero: HomeHeroData, syncCloud = true) => {
+    setItem(STORAGE_KEYS.HERO, hero);
+    if (syncCloud) firestoreService.saveHeroData(hero).catch(() => {});
+  },
   resetHeroData: () => setItem(STORAGE_KEYS.HERO, DEFAULT_HERO_DATA),
 
   getHomeSections: (): HomeSectionConfig[] => {
     const list = getItem(STORAGE_KEYS.SECTIONS, DEFAULT_HOME_SECTIONS);
     return list.filter((s: HomeSectionConfig) => s.key !== 'batches' && s.id !== 'sec-batches');
   },
-  saveHomeSections: (sections: HomeSectionConfig[]) => setItem(STORAGE_KEYS.SECTIONS, sections),
+  saveHomeSections: (sections: HomeSectionConfig[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.SECTIONS, sections);
+    if (syncCloud) firestoreService.saveHomeSections(sections).catch(() => {});
+  },
   resetHomeSections: () => setItem(STORAGE_KEYS.SECTIONS, DEFAULT_HOME_SECTIONS),
 
   // Why Choose & Course Features
   getWhyChoose: (): WhyChooseItem[] => getItem(STORAGE_KEYS.WHY_CHOOSE, DEFAULT_WHY_CHOOSE),
-  saveWhyChoose: (items: WhyChooseItem[]) => setItem(STORAGE_KEYS.WHY_CHOOSE, items),
+  saveWhyChoose: (items: WhyChooseItem[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.WHY_CHOOSE, items);
+    if (syncCloud) firestoreService.saveWhyChoose(items).catch(() => {});
+  },
   resetWhyChoose: () => setItem(STORAGE_KEYS.WHY_CHOOSE, DEFAULT_WHY_CHOOSE),
 
   getCourseFeatures: (): CourseFeatureItem[] =>
     getItem(STORAGE_KEYS.COURSE_FEATURES, DEFAULT_COURSE_FEATURES),
-  saveCourseFeatures: (items: CourseFeatureItem[]) =>
-    setItem(STORAGE_KEYS.COURSE_FEATURES, items),
+  saveCourseFeatures: (items: CourseFeatureItem[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.COURSE_FEATURES, items);
+    if (syncCloud) firestoreService.saveCourseFeatures(items).catch(() => {});
+  },
   resetCourseFeatures: () => setItem(STORAGE_KEYS.COURSE_FEATURES, DEFAULT_COURSE_FEATURES),
 
   // Courses
   getCourses: (): Course[] => getItem(STORAGE_KEYS.COURSES, DEFAULT_COURSES),
-  saveCourses: (courses: Course[]) => setItem(STORAGE_KEYS.COURSES, courses),
-  saveCourse: (course: Course) => {
+  saveCourses: (courses: Course[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.COURSES, courses);
+    if (syncCloud) firestoreService.saveCourses(courses).catch(() => {});
+  },
+  saveCourse: (course: Course, syncCloud = true) => {
     const list = getItem<Course[]>(STORAGE_KEYS.COURSES, DEFAULT_COURSES);
     const existingIdx = list.findIndex((c) => c.id === course.id);
-    if (existingIdx >= 0) {
-      list[existingIdx] = course;
-      setItem(STORAGE_KEYS.COURSES, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.COURSES, [course, ...list]);
-    }
+    const updated = existingIdx >= 0
+      ? list.map((c, i) => (i === existingIdx ? course : c))
+      : [course, ...list];
+    setItem(STORAGE_KEYS.COURSES, updated);
+    if (syncCloud) firestoreService.saveCourse(course).catch(() => {});
   },
-  deleteCourse: (id: string) => {
+  deleteCourse: (id: string, syncCloud = true) => {
     const list = getItem<Course[]>(STORAGE_KEYS.COURSES, DEFAULT_COURSES);
     setItem(STORAGE_KEYS.COURSES, list.filter((c) => c.id !== id));
+    if (syncCloud) firestoreService.deleteCourse(id).catch(() => {});
   },
   resetCourses: () => setItem(STORAGE_KEYS.COURSES, DEFAULT_COURSES),
 
   // Batches
   getBatches: (): Batch[] => getItem(STORAGE_KEYS.BATCHES, DEFAULT_BATCHES),
-  saveBatches: (batches: Batch[]) => setItem(STORAGE_KEYS.BATCHES, batches),
-  saveBatch: (batch: Batch) => {
+  saveBatches: (batches: Batch[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.BATCHES, batches);
+    if (syncCloud) firestoreService.saveBatches(batches).catch(() => {});
+  },
+  saveBatch: (batch: Batch, syncCloud = true) => {
     const list = getItem<Batch[]>(STORAGE_KEYS.BATCHES, DEFAULT_BATCHES);
     const existingIdx = list.findIndex((b) => b.id === batch.id);
-    if (existingIdx >= 0) {
-      list[existingIdx] = batch;
-      setItem(STORAGE_KEYS.BATCHES, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.BATCHES, [batch, ...list]);
-    }
+    const updated = existingIdx >= 0
+      ? list.map((b, i) => (i === existingIdx ? batch : b))
+      : [batch, ...list];
+    setItem(STORAGE_KEYS.BATCHES, updated);
+    if (syncCloud) firestoreService.saveBatch(batch).catch(() => {});
   },
-  deleteBatch: (id: string) => {
+  deleteBatch: (id: string, syncCloud = true) => {
     const list = getItem<Batch[]>(STORAGE_KEYS.BATCHES, DEFAULT_BATCHES);
     setItem(STORAGE_KEYS.BATCHES, list.filter((b) => b.id !== id));
+    if (syncCloud) firestoreService.deleteBatch(id).catch(() => {});
   },
   resetBatches: () => setItem(STORAGE_KEYS.BATCHES, DEFAULT_BATCHES),
 
   // Faculty
   getFaculty: (): FacultyMember[] => getItem(STORAGE_KEYS.FACULTY, DEFAULT_FACULTY),
-  saveFaculty: (facultyListOrMember: FacultyMember[] | FacultyMember) => {
+  saveFaculty: (facultyListOrMember: FacultyMember[] | FacultyMember, syncCloud = true) => {
     if (Array.isArray(facultyListOrMember)) {
       setItem(STORAGE_KEYS.FACULTY, facultyListOrMember);
+      if (syncCloud) firestoreService.saveFaculty(facultyListOrMember).catch(() => {});
     } else {
       const list = getItem<FacultyMember[]>(STORAGE_KEYS.FACULTY, DEFAULT_FACULTY);
       const existingIdx = list.findIndex((f) => f.id === facultyListOrMember.id);
-      if (existingIdx >= 0) {
-        list[existingIdx] = facultyListOrMember;
-        setItem(STORAGE_KEYS.FACULTY, [...list]);
-      } else {
-        setItem(STORAGE_KEYS.FACULTY, [...list, facultyListOrMember]);
-      }
+      const updated = existingIdx >= 0
+        ? list.map((f, i) => (i === existingIdx ? facultyListOrMember : f))
+        : [...list, facultyListOrMember];
+      setItem(STORAGE_KEYS.FACULTY, updated);
+      if (syncCloud) firestoreService.saveFacultyMember(facultyListOrMember).catch(() => {});
     }
   },
-  deleteFaculty: (id: string) => {
+  deleteFaculty: (id: string, syncCloud = true) => {
     const list = getItem<FacultyMember[]>(STORAGE_KEYS.FACULTY, DEFAULT_FACULTY);
     setItem(STORAGE_KEYS.FACULTY, list.filter((f) => f.id !== id));
+    if (syncCloud) firestoreService.deleteFaculty(id).catch(() => {});
   },
   resetFaculty: () => setItem(STORAGE_KEYS.FACULTY, DEFAULT_FACULTY),
 
@@ -279,12 +308,10 @@ export const dbService = {
   saveQuestion: (question: Question) => {
     const list = getItem<Question[]>(STORAGE_KEYS.QUESTIONS, DEFAULT_QUESTIONS);
     const existingIdx = list.findIndex((q) => q.id === question.id);
-    if (existingIdx >= 0) {
-      list[existingIdx] = question;
-      setItem(STORAGE_KEYS.QUESTIONS, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.QUESTIONS, [question, ...list]);
-    }
+    const updated = existingIdx >= 0
+      ? list.map((q, i) => (i === existingIdx ? question : q))
+      : [question, ...list];
+    setItem(STORAGE_KEYS.QUESTIONS, updated);
   },
   deleteQuestion: (id: string) => {
     const list = getItem<Question[]>(STORAGE_KEYS.QUESTIONS, DEFAULT_QUESTIONS);
@@ -299,72 +326,82 @@ export const dbService = {
   resetTestSettings: () => setItem(STORAGE_KEYS.TEST_SETTINGS, DEFAULT_TEST_SETTINGS),
 
   getTestAttempts: (): TestAttempt[] => getItem(STORAGE_KEYS.TEST_ATTEMPTS, []),
-  saveTestAttempt: (attempt: TestAttempt) => {
+  saveTestAttempt: (attempt: TestAttempt, syncCloud = true) => {
     const attempts = getItem<TestAttempt[]>(STORAGE_KEYS.TEST_ATTEMPTS, []);
     setItem(STORAGE_KEYS.TEST_ATTEMPTS, [attempt, ...attempts]);
+    if (syncCloud) firestoreService.saveTestAttempt(attempt as unknown as Record<string, unknown>).catch(() => {});
   },
-  deleteTestAttempt: (id: string) => {
+  deleteTestAttempt: (id: string, syncCloud = true) => {
     const attempts = getItem<TestAttempt[]>(STORAGE_KEYS.TEST_ATTEMPTS, []);
     setItem(STORAGE_KEYS.TEST_ATTEMPTS, attempts.filter((a) => a.id !== id));
+    if (syncCloud) firestoreService.deleteTestAttempt(id).catch(() => {});
   },
   clearTestAttempts: () => setItem(STORAGE_KEYS.TEST_ATTEMPTS, []),
 
   // Testimonials
   getTestimonials: (): Testimonial[] =>
     getItem(STORAGE_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS),
-  saveTestimonials: (testimonials: Testimonial[]) =>
-    setItem(STORAGE_KEYS.TESTIMONIALS, testimonials),
-  saveTestimonial: (t: Testimonial) => {
+  saveTestimonials: (testimonials: Testimonial[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.TESTIMONIALS, testimonials);
+    if (syncCloud) firestoreService.saveTestimonials(testimonials).catch(() => {});
+  },
+  saveTestimonial: (t: Testimonial, syncCloud = true) => {
     const list = getItem<Testimonial[]>(STORAGE_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
     const existingIdx = list.findIndex((item) => item.id === t.id);
-    if (existingIdx >= 0) {
-      list[existingIdx] = t;
-      setItem(STORAGE_KEYS.TESTIMONIALS, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.TESTIMONIALS, [t, ...list]);
-    }
+    const updated = existingIdx >= 0
+      ? list.map((item, i) => (i === existingIdx ? t : item))
+      : [t, ...list];
+    setItem(STORAGE_KEYS.TESTIMONIALS, updated);
+    if (syncCloud) firestoreService.saveTestimonial(t).catch(() => {});
   },
-  deleteTestimonial: (id: string) => {
+  deleteTestimonial: (id: string, syncCloud = true) => {
     const list = getItem<Testimonial[]>(STORAGE_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS);
     setItem(STORAGE_KEYS.TESTIMONIALS, list.filter((item) => item.id !== id));
+    if (syncCloud) firestoreService.deleteTestimonial(id).catch(() => {});
   },
   resetTestimonials: () => setItem(STORAGE_KEYS.TESTIMONIALS, DEFAULT_TESTIMONIALS),
 
   // Gallery
   getGallery: (): GalleryItem[] => getItem(STORAGE_KEYS.GALLERY, DEFAULT_GALLERY),
-  saveGallery: (gallery: GalleryItem[]) => setItem(STORAGE_KEYS.GALLERY, gallery),
-  saveGalleryItem: (g: GalleryItem) => {
+  saveGallery: (gallery: GalleryItem[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.GALLERY, gallery);
+    if (syncCloud) firestoreService.saveGallery(gallery).catch(() => {});
+  },
+  saveGalleryItem: (g: GalleryItem, syncCloud = true) => {
     const list = getItem<GalleryItem[]>(STORAGE_KEYS.GALLERY, DEFAULT_GALLERY);
     const existingIdx = list.findIndex((item) => item.id === g.id);
-    if (existingIdx >= 0) {
-      list[existingIdx] = g;
-      setItem(STORAGE_KEYS.GALLERY, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.GALLERY, [g, ...list]);
-    }
+    const updated = existingIdx >= 0
+      ? list.map((item, i) => (i === existingIdx ? g : item))
+      : [g, ...list];
+    setItem(STORAGE_KEYS.GALLERY, updated);
+    if (syncCloud) firestoreService.saveGalleryItem(g).catch(() => {});
   },
-  deleteGalleryItem: (id: string) => {
+  deleteGalleryItem: (id: string, syncCloud = true) => {
     const list = getItem<GalleryItem[]>(STORAGE_KEYS.GALLERY, DEFAULT_GALLERY);
     setItem(STORAGE_KEYS.GALLERY, list.filter((item) => item.id !== id));
+    if (syncCloud) firestoreService.deleteGalleryItem(id).catch(() => {});
   },
   resetGallery: () => setItem(STORAGE_KEYS.GALLERY, DEFAULT_GALLERY),
 
   // FAQs
   getFAQs: (): FAQItem[] => getItem(STORAGE_KEYS.FAQS, DEFAULT_FAQS),
-  saveFAQs: (faqs: FAQItem[]) => setItem(STORAGE_KEYS.FAQS, faqs),
-  saveFaq: (f: FAQItem) => {
+  saveFAQs: (faqs: FAQItem[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.FAQS, faqs);
+    if (syncCloud) firestoreService.saveFAQs(faqs).catch(() => {});
+  },
+  saveFaq: (f: FAQItem, syncCloud = true) => {
     const list = getItem<FAQItem[]>(STORAGE_KEYS.FAQS, DEFAULT_FAQS);
     const existingIdx = list.findIndex((item) => item.id === f.id);
-    if (existingIdx >= 0) {
-      list[existingIdx] = f;
-      setItem(STORAGE_KEYS.FAQS, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.FAQS, [f, ...list]);
-    }
+    const updated = existingIdx >= 0
+      ? list.map((item, i) => (i === existingIdx ? f : item))
+      : [f, ...list];
+    setItem(STORAGE_KEYS.FAQS, updated);
+    if (syncCloud) firestoreService.saveFaq(f).catch(() => {});
   },
-  deleteFaq: (id: string) => {
+  deleteFaq: (id: string, syncCloud = true) => {
     const list = getItem<FAQItem[]>(STORAGE_KEYS.FAQS, DEFAULT_FAQS);
     setItem(STORAGE_KEYS.FAQS, list.filter((item) => item.id !== id));
+    if (syncCloud) firestoreService.deleteFaq(id).catch(() => {});
   },
   resetFAQs: () => setItem(STORAGE_KEYS.FAQS, DEFAULT_FAQS),
 
@@ -380,14 +417,23 @@ export const dbService = {
     }
     return stored;
   },
-  saveNavItems: (items: NavItem[]) => setItem(STORAGE_KEYS.NAV, items),
+  saveNavItems: (items: NavItem[], syncCloud = true) => {
+    setItem(STORAGE_KEYS.NAV, items);
+    if (syncCloud) firestoreService.saveNavItems(items).catch(() => {});
+  },
   resetNavItems: () => setItem(STORAGE_KEYS.NAV, DEFAULT_NAV_ITEMS),
 
   // SEO
   getSEO: (): SEOConfig => getItem(STORAGE_KEYS.SEO, DEFAULT_SEO),
   getSEOSettings: (): SEOConfig => getItem(STORAGE_KEYS.SEO, DEFAULT_SEO),
-  saveSEO: (seo: SEOConfig) => setItem(STORAGE_KEYS.SEO, seo),
-  saveSEOSettings: (seo: SEOConfig) => setItem(STORAGE_KEYS.SEO, seo),
+  saveSEO: (seo: SEOConfig, syncCloud = true) => {
+    setItem(STORAGE_KEYS.SEO, seo);
+    if (syncCloud) firestoreService.saveSEO(seo).catch(() => {});
+  },
+  saveSEOSettings: (seo: SEOConfig, syncCloud = true) => {
+    setItem(STORAGE_KEYS.SEO, seo);
+    if (syncCloud) firestoreService.saveSEO(seo).catch(() => {});
+  },
   resetSEO: () => setItem(STORAGE_KEYS.SEO, DEFAULT_SEO),
 
   // Media Library
@@ -400,8 +446,10 @@ export const dbService = {
 
   // About Page
   getAboutContent: () => getItem(STORAGE_KEYS.ABOUT_CONTENT, DEFAULT_ABOUT_CONTENT),
-  saveAboutContent: (content: typeof DEFAULT_ABOUT_CONTENT) =>
-    setItem(STORAGE_KEYS.ABOUT_CONTENT, content),
+  saveAboutContent: (content: typeof DEFAULT_ABOUT_CONTENT, syncCloud = true) => {
+    setItem(STORAGE_KEYS.ABOUT_CONTENT, content);
+    if (syncCloud) firestoreService.saveAboutContent(content as unknown as Record<string, unknown>).catch(() => {});
+  },
   resetAboutContent: () => setItem(STORAGE_KEYS.ABOUT_CONTENT, DEFAULT_ABOUT_CONTENT),
 
   // Enquiries & Enrollments
@@ -431,26 +479,27 @@ export const dbService = {
         adminNotes: 'Spoke over phone. Sent course syllabus PDF on WhatsApp.'
       }
     ]),
-  saveEnquiry: (enquiry: EnquiryRecord) => {
+  saveEnquiry: (enquiry: EnquiryRecord, syncCloud = true) => {
     const list = getItem<EnquiryRecord[]>(STORAGE_KEYS.ENQUIRIES, []);
     const idx = list.findIndex((e) => e.id === enquiry.id);
-    if (idx >= 0) {
-      list[idx] = enquiry;
-      setItem(STORAGE_KEYS.ENQUIRIES, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.ENQUIRIES, [enquiry, ...list]);
-    }
+    const updated = idx >= 0
+      ? list.map((item, i) => (i === idx ? enquiry : item))
+      : [enquiry, ...list];
+    setItem(STORAGE_KEYS.ENQUIRIES, updated);
+    if (syncCloud) firestoreService.saveEnquiry(enquiry as unknown as Record<string, unknown>).catch(() => {});
   },
-  updateEnquiry: (updated: EnquiryRecord) => {
+  updateEnquiry: (updated: EnquiryRecord, syncCloud = true) => {
     const list = getItem<EnquiryRecord[]>(STORAGE_KEYS.ENQUIRIES, []);
     setItem(
       STORAGE_KEYS.ENQUIRIES,
       list.map((item) => (item.id === updated.id ? updated : item))
     );
+    if (syncCloud) firestoreService.saveEnquiry(updated as unknown as Record<string, unknown>).catch(() => {});
   },
-  deleteEnquiry: (id: string) => {
+  deleteEnquiry: (id: string, syncCloud = true) => {
     const list = getItem<EnquiryRecord[]>(STORAGE_KEYS.ENQUIRIES, []);
     setItem(STORAGE_KEYS.ENQUIRIES, list.filter((item) => item.id !== id));
+    if (syncCloud) firestoreService.deleteEnquiry(id).catch(() => {});
   },
 
   getEnrollments: (): EnrollmentRecord[] =>
@@ -473,26 +522,55 @@ export const dbService = {
         status: 'New'
       }
     ]),
-  saveEnrollment: (enrollment: EnrollmentRecord) => {
+  saveEnrollment: (enrollment: EnrollmentRecord, syncCloud = true) => {
     const list = getItem<EnrollmentRecord[]>(STORAGE_KEYS.ENROLLMENTS, []);
     const idx = list.findIndex((e) => e.id === enrollment.id);
-    if (idx >= 0) {
-      list[idx] = enrollment;
-      setItem(STORAGE_KEYS.ENROLLMENTS, [...list]);
-    } else {
-      setItem(STORAGE_KEYS.ENROLLMENTS, [enrollment, ...list]);
-    }
+    const updated = idx >= 0
+      ? list.map((item, i) => (i === idx ? enrollment : item))
+      : [enrollment, ...list];
+    setItem(STORAGE_KEYS.ENROLLMENTS, updated);
+    if (syncCloud) firestoreService.saveEnrollment(enrollment as unknown as Record<string, unknown>).catch(() => {});
   },
-  updateEnrollment: (updated: EnrollmentRecord) => {
+  updateEnrollment: (updated: EnrollmentRecord, syncCloud = true) => {
     const list = getItem<EnrollmentRecord[]>(STORAGE_KEYS.ENROLLMENTS, []);
     setItem(
       STORAGE_KEYS.ENROLLMENTS,
       list.map((item) => (item.id === updated.id ? updated : item))
     );
+    if (syncCloud) firestoreService.saveEnrollment(updated as unknown as Record<string, unknown>).catch(() => {});
   },
-  deleteEnrollment: (id: string) => {
+  deleteEnrollment: (id: string, syncCloud = true) => {
     const list = getItem<EnrollmentRecord[]>(STORAGE_KEYS.ENROLLMENTS, []);
     setItem(STORAGE_KEYS.ENROLLMENTS, list.filter((item) => item.id !== id));
+    if (syncCloud) firestoreService.deleteEnrollment(id).catch(() => {});
+  },
+
+  // Push all local data to Cloud Firestore (Manual or Automatic Sync)
+  syncAllToCloudFirestore: async (): Promise<boolean> => {
+    try {
+      await Promise.all([
+        firestoreService.saveSettings(dbService.getSettings()),
+        firestoreService.saveCenters(dbService.getCenters()),
+        firestoreService.saveCourses(dbService.getCourses()),
+        firestoreService.saveBatches(dbService.getBatches()),
+        firestoreService.saveFaculty(dbService.getFaculty()),
+        firestoreService.saveTestimonials(dbService.getTestimonials()),
+        firestoreService.saveFAQs(dbService.getFAQs()),
+        firestoreService.saveGallery(dbService.getGallery()),
+        firestoreService.saveNavItems(dbService.getNavItems()),
+        firestoreService.saveHeroData(dbService.getHeroData()),
+        firestoreService.saveHomeSections(dbService.getHomeSections()),
+        firestoreService.saveWhyChoose(dbService.getWhyChoose()),
+        firestoreService.saveCourseFeatures(dbService.getCourseFeatures()),
+        firestoreService.saveSEO(dbService.getSEO()),
+        firestoreService.saveAboutContent(dbService.getAboutContent() as unknown as Record<string, unknown>),
+      ]);
+      console.log('[AIESD] Successfully synced all local data to Cloud Firestore!');
+      return true;
+    } catch (err) {
+      console.error('[AIESD] Cloud sync error:', err);
+      return false;
+    }
   },
 
   // Admin Users

@@ -92,52 +92,75 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         // Step 2: Wire up real-time listeners — Firestore pushes live updates
         unsubscribers.push(
           subscribeToSettings((data) => {
-            setSettings(data);
-            // Mirror to localStorage for instant next-load
-            dbService.saveSettings(data);
+            if (data && Object.keys(data).length > 0) {
+              setSettings(data);
+              dbService.saveSettings(data, false);
+            }
           }),
           subscribeToCollection<Center>(COL.CENTERS, (items) => {
-            setCenters(items);
-            dbService.saveCenters(items);
+            if (items && items.length > 0) {
+              setCenters(items);
+              dbService.saveCenters(items, false);
+            }
           }),
           subscribeToCollection<Course>(COL.COURSES, (items) => {
-            setCourses(items);
-            dbService.saveCourses(items);
+            if (items && items.length > 0) {
+              setCourses(items);
+              dbService.saveCourses(items, false);
+            }
           }),
           subscribeToCollection<Batch>(COL.BATCHES, (items) => {
-            setBatches(items);
-            dbService.saveBatches(items);
+            if (items && items.length > 0) {
+              setBatches(items);
+              dbService.saveBatches(items, false);
+            }
           }),
           subscribeToCollection<FacultyMember>(COL.FACULTY, (items) => {
-            setFaculty(items);
-            dbService.saveFaculty(items);
+            if (items && items.length > 0) {
+              setFaculty(items);
+              dbService.saveFaculty(items, false);
+            }
           }),
           subscribeToCollection<Testimonial>(COL.TESTIMONIALS, (items) => {
-            setTestimonials(items);
-            dbService.saveTestimonials(items);
+            if (items && items.length > 0) {
+              setTestimonials(items);
+              dbService.saveTestimonials(items, false);
+            }
           }),
           subscribeToCollection<FAQItem>(COL.FAQS, (items) => {
-            setFaqs(items);
-            dbService.saveFAQs(items);
+            if (items && items.length > 0) {
+              setFaqs(items);
+              dbService.saveFAQs(items, false);
+            }
           }),
           subscribeToCollection<GalleryItem>(COL.GALLERY, (items) => {
-            setGallery(items);
-            dbService.saveGallery(items);
+            if (items && items.length > 0) {
+              setGallery(items);
+              dbService.saveGallery(items, false);
+            }
           }),
           subscribeToCollection<NavItem>(COL.NAV, (items) => {
-            const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-            setNavItems(sorted);
-            dbService.saveNavItems(sorted);
+            if (items && items.length > 0) {
+              const sorted = [...items].sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+              setNavItems(sorted);
+              dbService.saveNavItems(sorted, false);
+            }
           }),
           subscribeToCollection<HomeSectionConfig>(COL.HOME_SECTIONS, (items) => {
-            const filtered = items.filter((s) => s.key !== 'batches' && s.id !== 'sec-batches');
-            setHomeSections(filtered);
+            if (items && items.length > 0) {
+              const filtered = items.filter((s) => s.key !== 'batches' && s.id !== 'sec-batches');
+              setHomeSections(filtered);
+            }
           }),
           subscribeToCollection<WhyChooseItem>(COL.WHY_CHOOSE, (items) => {
-            setWhyChoose(items);
+            if (items && items.length > 0) {
+              setWhyChoose(items);
+            }
           }),
           subscribeToCollection<CourseFeatureItem>(COL.COURSE_FEAT, (items) => {
-            setCourseFeatures(items);
+            if (items && items.length > 0) {
+              setCourseFeatures(items);
+            }
           }),
         );
 

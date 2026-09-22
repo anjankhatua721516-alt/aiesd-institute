@@ -2,14 +2,31 @@ import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { dbService } from '../../services/db';
 import { SiteSettings } from '../../types';
-import { Save, CheckCircle2, ShieldCheck, AlertCircle, RefreshCw, Download, Upload, Database } from 'lucide-react';
+import { Save, CheckCircle2, ShieldCheck, AlertCircle, RefreshCw, Download, Upload, Database, Cloud } from 'lucide-react';
 
 export const SiteSettingsTab: React.FC = () => {
   const { settings, showToast, refreshState, adminUser } = useApp();
   const [formData, setFormData] = useState<SiteSettings>({ ...settings });
   const [isSaving, setIsSaving] = useState(false);
+  const [isSyncingCloud, setIsSyncingCloud] = useState(false);
 
   const isOwner = adminUser?.role === 'Owner';
+
+  const handleSyncCloud = async () => {
+    setIsSyncingCloud(true);
+    try {
+      const success = await dbService.syncAllToCloudFirestore();
+      if (success) {
+        showToast('All local data successfully synced to Cloud Firestore! Other browsers will now show your changes.', 'success');
+      } else {
+        showToast('Failed to sync to Cloud Firestore. Please check your internet connection.', 'error');
+      }
+    } catch {
+      showToast('Error syncing to Cloud.', 'error');
+    } finally {
+      setIsSyncingCloud(false);
+    }
+  };
 
   const handleChange = (field: keyof SiteSettings, value: any) => {
     setFormData((prev) => ({
@@ -382,7 +399,25 @@ export const SiteSettingsTab: React.FC = () => {
           </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-4 pt-2">
+        <div className="grid sm:grid-cols-3 gap-4 pt-2">
+          <div className="p-4 rounded-xl border border-[#e4e4e7] bg-[#fafafa] space-y-2">
+            <h4 className="text-xs font-bold text-[#18181b] flex items-center gap-2">
+              <Cloud className="w-4 h-4 text-sky-600" /> Push to Cloud Firestore
+            </h4>
+            <p className="text-[11px] text-[#71717a]">
+              Upload all local changes to Firebase so other browsers, devices, and Vercel update instantly.
+            </p>
+            <button
+              type="button"
+              disabled={isSyncingCloud}
+              onClick={handleSyncCloud}
+              className="mt-2 inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-[#0284c7] text-white text-xs font-semibold hover:bg-[#0369a1] disabled:opacity-50 transition-colors"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncingCloud ? 'animate-spin' : ''}`} />
+              {isSyncingCloud ? 'Syncing...' : 'Sync to Cloud Now'}
+            </button>
+          </div>
+
           <div className="p-4 rounded-xl border border-[#e4e4e7] bg-[#fafafa] space-y-2">
             <h4 className="text-xs font-bold text-[#18181b] flex items-center gap-2">
               <Download className="w-4 h-4 text-emerald-600" /> Export Database Backup
